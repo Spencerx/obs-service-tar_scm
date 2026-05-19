@@ -116,7 +116,9 @@ class Scm():
         if self.user and self.password:
             self.org_url = self.url
             logging.debug('[auth_url] settings credentials from keyring')
-            repl = "\\1{self.user}:{self.password}@\\2".format()
+            repl = '\\1{u}:{p}@\\2'.format(
+                u=re.escape(self.user), p=re.escape(self.password)
+            )
             self.url = re.sub(auth_patterns[self.scm], repl, self.url)
 
     def check_scm(self):

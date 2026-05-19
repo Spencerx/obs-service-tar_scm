@@ -1,7 +1,7 @@
 #
 # spec file for package obs-service-tar_scm
 #
-# Copyright (c) 2025 SUSE LLC
+# Copyright (c) 2026 SUSE LLC and contributors
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -113,7 +113,6 @@ Requires:       git-core                                        \
 Recommends:     obs-service-download_files                      \
 Recommends:     %{use_python}-keyring                           \
 Recommends:     %{use_python}-keyrings.alt                      \
-Suggests:       bzr                                             \
 Suggests:       mercurial                                       \
 Suggests:       subversion                                      \
 %endif                                                          \
@@ -123,8 +122,8 @@ Suggests:       subversion                                      \
 
 %define pkg_name obs-service-tar_scm
 Name:           %{pkg_name}%{nsuffix}
-%define version_unconverted 0.10.46
-Version:        0.10.46
+%define version_unconverted 0.12.1
+Version:        0.12.1
 Release:        0
 Summary:        An OBS source service: create tar ball from svn/git/hg
 License:        GPL-2.0-or-later
@@ -141,7 +140,6 @@ BuildRequires:  %{locale_package}
 BuildRequires:  %{pkg_name} = %{version}
 BuildRequires:  %{use_python}-keyring
 BuildRequires:  %{use_python}-keyrings.alt
-BuildRequires:  bzr
 BuildRequires:  git-core
 BuildRequires:  gpg
 BuildRequires:  mercurial
@@ -182,7 +180,7 @@ Requires:       %{python_path}
 %description
 This is a source service for openSUSE Build Service.
 
-It supports downloading from svn, git, hg and bzr repositories.
+It supports downloading from svn, git and hg repositories.
 
 %package -n     obs-service-obs_scm-common
 Summary:        Common parts of SCM handling services
@@ -197,7 +195,7 @@ Requires:       %{use_python}-argparse
 %description -n obs-service-obs_scm-common
 This is a source service for openSUSE Build Service.
 
-It supports downloading from svn, git, hg and bzr repositories.
+It supports downloading from svn, git and hg repositories.
 
 This package holds the shared files for different services.
 
