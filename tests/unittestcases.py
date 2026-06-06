@@ -56,6 +56,35 @@ class UnitTestCases(unittest.TestCase):
             self.assertTrue(scm.clone_dir.endswith('/repo'))
             self.tasks.cleanup()
 
+    def test_versionrw_count_mismatch(self):
+        cli = TarSCM.Cli()
+        self.assertRaisesRegex(
+            SystemExit,
+            re.compile("--versionrewrite-pattern/--versionrewrite-replacement "
+                       "is not valid"),
+            cli.parse_args,
+            ['--outdir', '.',
+             '--versionrewrite-pattern', 'a',
+             '--versionrewrite-pattern', 'b',
+             '--versionrewrite-replacement', 'x'],
+        )
+
+    def test_versionrw_count_match(self):
+        cli = TarSCM.Cli()
+        cli.parse_args(['--outdir', '.',
+                        '--versionrewrite-pattern', 'a',
+                        '--versionrewrite-pattern', 'b',
+                        '--versionrewrite-replacement', 'x',
+                        '--versionrewrite-replacement', 'y'])
+        self.assertEqual(cli.versionrewrite_pattern, ['a', 'b'])
+        self.assertEqual(cli.versionrewrite_replacement, ['x', 'y'])
+
+    def test_versionrw_single_pattern(self):
+        cli = TarSCM.Cli()
+        cli.parse_args(['--outdir', '.',
+                        '--versionrewrite-pattern', 'a'])
+        self.assertEqual(cli.versionrewrite_pattern, ['a'])
+
     @patch('TarSCM.Helpers.safe_run')
     def test__git_log_cmd_with_args(self, safe_run_mock):
         scm     = Git(self.cli, self.tasks)

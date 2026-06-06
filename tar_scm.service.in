@@ -100,13 +100,16 @@
     <description>
       Regex used to rewrite the version which is applied post versionformat. For
       example, to remove a tag prefix of "v" the regex "v(.*)" could be used.
-      See the versionrewrite-replacement parameter.
+      See the versionrewrite-replacement parameter. Can be specified multiple
+      times, in which case the patterns are applied in order, each paired with
+      the versionrewrite-replacement given at the same position.
     </description>
   </parameter>
   <parameter name="versionrewrite-replacement">
     <description>
       Replacement applied to rewrite pattern. Typically backreferences are
-      useful and as such defaults to \1.
+      useful and as such defaults to \1. Can be specified multiple times. The
+      Nth replacement is paired with the Nth versionrewrite-pattern.
     </description>
   </parameter>
   <parameter name="versionprefix">

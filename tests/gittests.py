@@ -250,6 +250,19 @@ class GitTests(GitHgTests, GitSvnTests):
                          "--versionformat", "@PARENT_TAG@")
         self.assertTarOnly(self.basename(version="2-test"))
 
+    def test_versionrewrite_multiple(self):
+        fix = self.fixtures
+        fix.create_commits(2)
+        fix.safe_run('tag v263-rc3')
+        self.tar_scm_std("--revision", 'v263-rc3',
+                         "--match-tag", 'v*',
+                         "--versionrewrite-pattern", r'(\d)-rc',  # noqa: W605,E501 pylint: disable=W1401
+                         "--versionrewrite-replacement", r'\1~rc',  # noqa: W605,E501 pylint: disable=W1401
+                         "--versionrewrite-pattern", r'v(.*)',  # noqa: W605,E501 pylint: disable=W1401
+                         "--versionrewrite-replacement", r'\1',  # noqa: W605,E501 pylint: disable=W1401
+                         "--versionformat", "@PARENT_TAG@")
+        self.assertTarOnly(self.basename(version="263~rc3"))
+
     def test_match_tag(self):
         fix = self.fixtures
         fix.create_commits(2)
