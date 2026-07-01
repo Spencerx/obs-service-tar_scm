@@ -21,6 +21,7 @@ from tests.unittestcases import UnitTestCases
 from tests.tasks import TasksTestCases
 from tests.scm import SCMBaseTestCases
 from tests.tartests import TarTestCases
+from tests.cli import CliTestCases
 from tests.archiveobscpiotestcases import ArchiveOBSCpioTestCases
 
 
@@ -43,7 +44,8 @@ def prepare_testclasses():
         SCMBaseTestCases,
         GitTests,
         SvnTests,
-        TarTestCases
+        TarTestCases,
+        CliTestCases
     ]
 
     # quite ugly to remove them here

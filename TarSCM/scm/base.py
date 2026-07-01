@@ -9,6 +9,8 @@ import time
 import subprocess
 import glob
 
+from pathlib import Path
+
 from TarSCM.helpers import Helpers
 from TarSCM.changes import Changes
 from TarSCM.config import Config
@@ -406,7 +408,7 @@ class Scm():
         self.cleanup()
 
     def check_url(self):
-        return True
+        pass
 
     def run_and_hide(self, command, wdir, cleanup_dirs=[]):
         try:
@@ -419,6 +421,10 @@ class Scm():
             raise SystemExit(exc)
 
     def _prepare_gpg_settings(self):
+        infile = Path(self.args.maintainers_asc)
+        if not infile.is_file():
+            raise SystemExit(f"File {infile} does not exist.")
+
         logging.debug("preparing gpg settings")
         self._backup_gnupghome = os.getenv('GNUPGHOME')
         gpgdir = tempfile.mkdtemp()
