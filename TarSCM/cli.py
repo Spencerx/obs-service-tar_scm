@@ -6,6 +6,7 @@ import sys
 import locale
 import subprocess
 import logging
+import re
 
 
 def contains_dotdot(files):
@@ -318,5 +319,13 @@ class Cli():
         os.environ["LC_ALL"] = use_locale
         os.environ["LANG"] = use_locale
         os.environ["LANGUAGE"] = use_locale
+
+        # Filter for suspicious revision formats
+        # Allowed: `v1.1-2`
+        # Not Allowed:
+        #          `-1.1.2`
+        #          `1.1 2`
+        if args.revision and re.search(r'\s', args.revision):
+            raise SystemExit(f"option revision ({args.revision}) contains forbidden characters")
 
         return args
