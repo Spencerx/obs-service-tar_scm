@@ -44,6 +44,23 @@ def validate_extract_rename(extract_rename):
     return True
 
 
+def validate_versionrewrite(patterns, replacements):
+    # patterns and replacements are paired by index, so when more than one of
+    # either is given their counts must match
+    patterns_len = len(patterns or [])
+    replacements_len = len(replacements or [])
+
+    if (patterns_len > 1 or replacements_len > 1) and \
+            patterns_len != replacements_len:
+        print('--versionrewrite-pattern and --versionrewrite-replacement '
+              'must be specified the same number of times when more than one '
+              'is given (got %d pattern(s) and %d replacement(s))' %
+              (patterns_len, replacements_len))
+        return False
+
+    return True
+
+
 def check_locale(loc):
     try:
         aloc_tmp = subprocess.check_output(['locale', '-a'])
@@ -110,17 +127,21 @@ class Cli():
                                  'source using this format string. '
                                  'This parameter is used if the \'version\' '
                                  'parameter is not specified.')
-        parser.add_argument('--versionrewrite-pattern',
+        parser.add_argument('--versionrewrite-pattern', action='append',
                             help='Regex used to rewrite the version which is '
                                  'applied post versionformat. For example, to '
                                  'remove a tag prefix of "v" the regex '
                                  '"v(.*)" could be used. See the '
-                                 'versionrewrite-replacement parameter.')
-        parser.add_argument('--versionrewrite-replacement',
-                            default=r'\1',
+                                 'versionrewrite-replacement parameter. May '
+                                 'be specified multiple times. Patterns are '
+                                 'applied in order, each paired with the '
+                                 'matching versionrewrite-replacement.')
+        parser.add_argument('--versionrewrite-replacement', action='append',
                             help='Replacement applied to rewrite pattern. '
                                  'Typically backreferences are useful and as '
-                                 'such defaults to \\1.')
+                                 'such defaults to \\1. May be specified '
+                                 'multiple times. The Nth replacement is '
+                                 'paired with the Nth versionrewrite-pattern.')
         parser.add_argument('--versionprefix',
                             help='Specify a base version as prefix.')
         parser.add_argument('--parent-tag',
@@ -270,6 +291,11 @@ class Cli():
 
         if args.filename and "/" in args.filename:
             sys.exit('--filename must not specify a path')
+
+        if not validate_versionrewrite(args.versionrewrite_pattern,
+                                       args.versionrewrite_replacement):
+            sys.exit('--versionrewrite-pattern/--versionrewrite-replacement '
+                     'is not valid')
 
         # booleanize non-standard parameters
         args.changesgenerate      = bool(args.changesgenerate == 'enable')

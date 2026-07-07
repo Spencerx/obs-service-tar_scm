@@ -316,8 +316,21 @@ class Tasks():
         if version == '_auto_' or self.args.versionformat:
             version = self.detect_version()
         if self.args.versionrewrite_pattern:
-            regex = re.compile(self.args.versionrewrite_pattern)
-            version = regex.sub(self.args.versionrewrite_replacement, version)
+            patterns = self.args.versionrewrite_pattern
+            if isinstance(patterns, str):
+                patterns = [patterns]
+            replacements = self.args.versionrewrite_replacement
+            if replacements is None:
+                replacements = []
+            elif isinstance(replacements, str):
+                replacements = [replacements]
+            for num, pattern in enumerate(patterns):
+                try:
+                    replacement = replacements[num]
+                except IndexError:
+                    replacement = r'\1'
+                regex = re.compile(pattern)
+                version = regex.sub(replacement, version)
         else:
             args = self.args.__dict__
             debian = args.get('use_obs_gbp', False)

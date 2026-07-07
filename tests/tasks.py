@@ -209,6 +209,21 @@ version: 1.0
         ver     = tasks.get_version()
         self.assertEqual(ver, '0.0.1-stable')
 
+    def test_get_version_multi_rules(self):
+        '''Test get_version with multiple sequential versionrewrite'''
+        self.cli.versionrewrite_pattern     = [r'(\d)-rc', r'v(.*)']
+        self.cli.versionrewrite_replacement = [r'\1~rc', r'\1']
+        cases = {
+            'v263.999+30+gdeadbeef':     '263.999+30+gdeadbeef',
+            'v263.1.999+30+gdeadbeef':   '263.1.999+30+gdeadbeef',
+            'v263-rc3.999+30+gdeadbeef': '263~rc3.999+30+gdeadbeef',
+        }
+        for raw, expected in cases.items():
+            scm   = FakeSCM(raw)
+            tasks = TarSCM.Tasks(self.cli)
+            tasks.scm_object = scm
+            self.assertEqual(tasks.get_version(), expected)
+
     def test_process_list(self):
         self.cli.snapcraft = False
         tasks = TarSCM.Tasks(self.cli)
